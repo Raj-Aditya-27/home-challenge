@@ -1,5 +1,5 @@
 import { getWeatherDescription, getWeatherIcon } from "../utils/weatherCodeMapper"
-import { MapPin, Wind, Droplets, Thermometer } from "lucide-react"
+import { MapPin, Wind, Thermometer } from "lucide-react"
 
 function CurrentWeather({ data }) {
   const { current, city } = data
@@ -36,7 +36,7 @@ function CurrentWeather({ data }) {
         </div>
 
         {/* Weather details */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/10 backdrop-blur-sm">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <Wind className="w-5 h-5 text-white" />
@@ -44,16 +44,6 @@ function CurrentWeather({ data }) {
             <div>
               <p className="text-xs text-white/70 uppercase tracking-wide">Wind Speed</p>
               <p className="text-lg font-semibold text-white">{current.windspeed} km/h</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/10 backdrop-blur-sm">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <Droplets className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-xs text-white/70 uppercase tracking-wide">Humidity</p>
-              <p className="text-lg font-semibold text-white">{current.humidity}%</p>
             </div>
           </div>
         </div>

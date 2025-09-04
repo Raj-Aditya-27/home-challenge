@@ -9,11 +9,6 @@ export function useWeather() {
   const [error, setError] = useState(null);
 
   const fetchWeather = async (city) => {
-    if (!city || city.trim() === "") {
-      setError("Please enter a valid city name");
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
@@ -21,6 +16,7 @@ export function useWeather() {
       const data = await fetchWeatherData(city);
       setWeather(data);
     } catch (err) {
+      setWeather(null);
       setError(err.message || "Failed to fetch weather data. Please try again.");
     } finally {
       setLoading(false);

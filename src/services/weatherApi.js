@@ -1,4 +1,3 @@
-// Real Weather API service using Open-Meteo
 const GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -15,6 +14,10 @@ export async function fetchWeatherData(city) {
 
     const { latitude, longitude, name, country } = geoData.results[0];
 
+    if (!name.toLowerCase().includes(city.toLowerCase())) {
+      throw new Error("City not found. Please check the name and try again.");
+    }
+
     // Step 2: Fetch weather data
     const weatherRes = await fetch(
       `${WEATHER_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`
@@ -29,22 +32,19 @@ export async function fetchWeatherData(city) {
       city: `${name}, ${country}`,
       current: {
         time: weatherData.current_weather.time,
-        temperature: weatherData.current_weather.temperature,
+        temperature: Math.round(weatherData.current_weather.temperature),
         weathercode: weatherData.current_weather.weathercode,
-        windspeed: weatherData.current_weather.windspeed,
-        humidity: weatherData.hourly.relativehumidity_2m
-          ? weatherData.hourly.relativehumidity_2m[0]
-          : null, // Fallback if not available
+        windspeed: Math.round(weatherData.current_weather.windspeed),
       },
-      hourly: weatherData.hourly.time.map((t, i) => ({
+      hourly: weatherData.hourly.time.slice(0, 24).map((t, i) => ({
         time: t,
         temperature: weatherData.hourly.temperature_2m[i],
         weathercode: weatherData.hourly.weathercode[i],
       })),
       daily: weatherData.daily.time.map((day, i) => ({
-        day,
-        max: weatherData.daily.temperature_2m_max[i],
-        min: weatherData.daily.temperature_2m_min[i],
+        day: i === 0 ? "Today" : new Date(day).toLocaleDateString("en-US", { weekday: "short" }),
+        max: Math.round(weatherData.daily.temperature_2m_max[i]),
+        min: Math.round(weatherData.daily.temperature_2m_min[i]),
         weathercode: weatherData.daily.weathercode[i],
       })),
     };
