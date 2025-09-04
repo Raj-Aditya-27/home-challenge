@@ -1,51 +1,54 @@
-import axios from "axios";
-
-const geocodeApi = "https://geocoding-api.open-meteo.com/v1/search";
-const weatherApi = "https://api.open-meteo.com/v1/forecast";
+// Real Weather API service using Open-Meteo
+const GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search";
+const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 
 export async function fetchWeatherData(city) {
-  // Step 1: Get city coordinates
-  const geoRes = await axios.get(geocodeApi, { params: { name: city } });
-  const location = geoRes.data.results[0];
-  const { latitude, longitude, name, country } = location;
+  try {
+    // Step 1: Get coordinates for the city
+    const geoRes = await fetch(`${GEOCODE_URL}?name=${encodeURIComponent(city)}&count=1`);
+    if (!geoRes.ok) throw new Error("Failed to fetch city coordinates");
 
-  // Step 2: Fetch weather data
-  const res = await axios.get(weatherApi, {
-    params: {
-      latitude,
-      longitude,
-      current_weather: true,
-      hourly: "temperature_2m,relative_humidity_2m,weathercode",
-      daily: "temperature_2m_max,temperature_2m_min,weathercode",
-      timezone: "auto",
-    },
-  });
+    const geoData = await geoRes.json();
+    if (!geoData.results || geoData.results.length === 0) {
+      throw new Error("City not found. Please check the name and try again.");
+    }
 
-  const current = {
-    temperature: res.data.current_weather.temperature,
-    weathercode: res.data.current_weather.weathercode,
-    windspeed: res.data.current_weather.windspeed,
-    humidity: res.data.hourly.relative_humidity_2m[0],
-    time: res.data.current_weather.time,
-  };
+    const { latitude, longitude, name, country } = geoData.results[0];
 
-  const hourly = res.data.hourly.time.slice(0, 6).map((t, i) => ({
-    time: new Date(t).getHours() + ":00",
-    temperature: res.data.hourly.temperature_2m[i],
-    weathercode: res.data.hourly.weathercode[i],
-  }));
+    // Step 2: Fetch weather data
+    const weatherRes = await fetch(
+      `${WEATHER_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`
+    );
 
-  const daily = res.data.daily.time.map((t, i) => ({
-    day: new Date(t).toLocaleDateString("en-US", { weekday: "short" }),
-    max: res.data.daily.temperature_2m_max[i],
-    min: res.data.daily.temperature_2m_min[i],
-    weathercode: res.data.daily.weathercode[i],
-  }));
+    if (!weatherRes.ok) throw new Error("Failed to fetch weather data");
 
-  return {
-    city: `${name}, ${country}`,
-    current,
-    hourly,
-    daily,
-  };
+    const weatherData = await weatherRes.json();
+
+    // Step 3: Structure the response
+    return {
+      city: `${name}, ${country}`,
+      current: {
+        time: weatherData.current_weather.time,
+        temperature: weatherData.current_weather.temperature,
+        weathercode: weatherData.current_weather.weathercode,
+        windspeed: weatherData.current_weather.windspeed,
+        humidity: weatherData.hourly.relativehumidity_2m
+          ? weatherData.hourly.relativehumidity_2m[0]
+          : null, // Fallback if not available
+      },
+      hourly: weatherData.hourly.time.map((t, i) => ({
+        time: t,
+        temperature: weatherData.hourly.temperature_2m[i],
+        weathercode: weatherData.hourly.weathercode[i],
+      })),
+      daily: weatherData.daily.time.map((day, i) => ({
+        day,
+        max: weatherData.daily.temperature_2m_max[i],
+        min: weatherData.daily.temperature_2m_min[i],
+        weathercode: weatherData.daily.weathercode[i],
+      })),
+    };
+  } catch (error) {
+    throw new Error(error.message || "Unexpected error fetching weather data");
+  }
 }
