@@ -1,12 +1,65 @@
-# React + Vite
+# 🌦️ Weather App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive weather application built with **React** and the **Open-Meteo API**.  
+Users can search for any city and view **current weather**, **hourly forecasts**, **daily forecasts**, and **outdoor activity suggestions**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
+- 🔍 **Search by City** – find weather info for any location.  
+- 🌡️ **Current Weather** – temperature, conditions, and icons.  
+- ⏳ **Hourly Forecast** – upcoming weather trends.  
+- 📅 **Daily Forecast** – weather predictions for the week.  
+- 🚶 **Outdoor Suggestion Card** – gives recommendations (e.g., “Perfect weather for outdoor activities! ☀️”).  
+- 📱 **Responsive Design** – optimized for desktop & mobile.  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+- **React (with Hooks & Components)**  
+- **TailwindCSS** for styling  
+- **Lucide Icons** for UI icons  
+- **Open-Meteo API** for weather data  
+
+---
+
+## ⚡ Installation & Setup
+
+1. **Clone the repository**
+
+https://github.com/Raj-Aditya-27/home-challenge.git
+cd weather-app
+
+
+2. **Install dependencies**
+npm install
+
+
+3. **Run the development server**
+npm run dev
+
+The app will be available at **http://localhost:3000**
+
+---
+
+## 🌍 API Used
+- [Open-Meteo API](https://open-meteo.com/) – Free weather data (current, hourly, daily).  
+
+---
+
+## 🚀 Future Enhancements
+- 🤖 AI-powered **ChatGPT suggestions** for outdoor activities.  
+- 📍 **Geolocation support** to fetch weather automatically for user’s location.  
+- 🔔 **Push notifications** for severe weather alerts.  
+- 🎨 **Improved UI animations & themes**.  
+
+---
+
+## 📷 Screenshots
+
+![Weather App Screenshot](src/screenshots/Weather%20App%201.jpeg)
+![Weather App Screenshot](src/screenshots/Weather%20App%202.jpeg)
+![Weather App Screenshot](src/screenshots/Weather%20App%203.jpeg)
+
+
+
